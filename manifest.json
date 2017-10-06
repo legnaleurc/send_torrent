@@ -1,0 +1,37 @@
+{
+
+  "manifest_version": 2,
+  "name": "Download with Transmission",
+  "version": "1.0",
+
+  "description": "Download a link with Transmission.",
+
+  "permissions": [
+    "menus",
+    "storage",
+    "http://*/",
+    "https://*/"
+  ],
+
+  "background": {
+    "scripts": [
+      "chrome/core.js",
+      "chrome/main.js"
+    ]
+  },
+  "content_scripts": [
+    {
+      "matches": [
+        "http://*/*",
+        "https://*/*"
+      ],
+      "js": ["content/main.js"],
+      "css": ["content/main.css"]
+    }
+  ],
+  "options_ui": {
+    "page": "pages/options.html",
+    "browser_style": true
+  }
+
+}
