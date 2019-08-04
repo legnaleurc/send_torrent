@@ -2,7 +2,7 @@
 
   "manifest_version": 2,
   "name": "Download with Transmission",
-  "version": "1.0",
+  "version": "1.1",
 
   "description": "Download a link with Transmission.",
 
