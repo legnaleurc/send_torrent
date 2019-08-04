@@ -92,6 +92,8 @@ async function saveOptionsFromForm (form) {
 async function sendToTransmission (torrentURL) {
   const opts = await loadOptions();
 
+  const torrentArg = await getTorrentArg(opts['upload-file'], torrentURL);
+
   const headers = new Headers();
   headers.append('Content-Type', 'application/json');
   if (opts.username && opts.password) {
@@ -105,7 +107,7 @@ async function sendToTransmission (torrentURL) {
   const args = {
     method: 'torrent-add',
     arguments: {
-      filename: torrentURL,
+      ...torrentArg,
       paused: opts['add-paused'],
     },
   };
@@ -132,6 +134,30 @@ async function sendToTransmission (torrentURL) {
   if (rv.result !== 'success') {
     throw new Error(`transmission error: ${rv.result}`);
   }
+  return rv;
+}
+
+
+async function getTorrentArg (uploadFile, torrentURL) {
+  if (uploadFile) {
+    const content = await downloadTorrent(torrentURL);
+    return {
+      metainfo: content,
+    };
+  } else {
+    return {
+      filename: torrentURL,
+    };
+  }
+}
+
+
+async function downloadTorrent (torrentURL) {
+  let rv = await fetch(torrentURL);
+  rv = await rv.arrayBuffer();
+  rv = new Uint8Array(rv);
+  rv = String.fromCharCode.apply(null, rv);
+  rv = btoa(rv);
   return rv;
 }
 
