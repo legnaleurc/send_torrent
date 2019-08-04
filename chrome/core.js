@@ -5,11 +5,12 @@ let gCurrentCsrfToken = null;
 
 function getDefaultValue () {
   return {
-    version: 1,
+    version: 2,
     url: '',
     username: '',
     password: '',
     'add-paused': false,
+    'upload-file': false,
   };
 }
 
@@ -27,9 +28,17 @@ async function loadOptions () {
   if (!opts) {
     opts = getDefaultValue();
   }
-  // TODO migration
-  if (opts.version !== 1) {
-    throw new Error('incompatible version');
+  // migration
+  while (true) {
+    if (opts.version === 1) {
+      opts['upload-file'] = false;
+      opts.version = 2;
+      await saveOptions(opts);
+    } else if (opts.version === 2) {
+      break;
+    } else {
+      throw new Error('incompatible version');
+    }
   }
   delete opts.version;
   return opts;
