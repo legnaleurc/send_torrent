@@ -139,7 +139,10 @@ async function sendToTransmission (torrentURL) {
 
 
 async function getTorrentArg (uploadFile, torrentURL) {
-  if (uploadFile) {
+  const url = new URL(torrentURL);
+  const isHttp = url.protocol === 'https:' || url.protocol === 'http:';
+  // only supports http, no magnet or anything else
+  if (uploadFile && isHttp) {
     const content = await downloadTorrent(torrentURL);
     return {
       metainfo: content,
