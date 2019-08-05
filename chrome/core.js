@@ -156,7 +156,7 @@ async function downloadTorrent (torrentURL) {
   let rv = await fetch(torrentURL);
   rv = await rv.arrayBuffer();
   rv = new Uint8Array(rv);
-  rv = String.fromCharCode.apply(null, rv);
+  rv = String.fromCharCode(...rv);
   rv = btoa(rv);
   return rv;
 }
