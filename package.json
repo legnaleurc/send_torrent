@@ -1,0 +1,19 @@
+{
+  "name": "send_torrent",
+  "version": "1.2.0",
+  "description": "WebExtension for Firefox.",
+  "scripts": {},
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/legnaleurc/send_torrent.git"
+  },
+  "author": "Wei-Cheng Pan",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/legnaleurc/send_torrent/issues"
+  },
+  "homepage": "https://github.com/legnaleurc/send_torrent#readme",
+  "devDependencies": {
+    "web-ext": "^8.9.0"
+  }
+}

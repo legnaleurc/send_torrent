@@ -2,7 +2,7 @@
 
   "manifest_version": 2,
   "name": "Send Torrent",
-  "version": "1.2",
+  "version": "1.2.0",
 
   "description": "Send a link to torrent server.",
 
