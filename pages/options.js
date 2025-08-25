@@ -1,6 +1,6 @@
-const options = document.querySelector('#options');
+const options = document.querySelector("#options");
 
-options.addEventListener('submit', (event) => {
+options.addEventListener("submit", (event) => {
   event.preventDefault();
 
   saveOptionsFromForm(event.target);

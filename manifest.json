@@ -1,30 +1,18 @@
 {
-
   "manifest_version": 2,
   "name": "Send Torrent",
   "version": "1.2.0",
 
   "description": "Send a link to torrent server.",
 
-  "permissions": [
-    "menus",
-    "storage",
-    "http://*/",
-    "https://*/"
-  ],
+  "permissions": ["menus", "storage", "http://*/", "https://*/"],
 
   "background": {
-    "scripts": [
-      "chrome/core.js",
-      "chrome/main.js"
-    ]
+    "scripts": ["chrome/core.js", "chrome/main.js"]
   },
   "content_scripts": [
     {
-      "matches": [
-        "http://*/*",
-        "https://*/*"
-      ],
+      "matches": ["http://*/*", "https://*/*"],
       "js": ["content/main.js"],
       "css": ["content/main.css"]
     }
@@ -33,5 +21,4 @@
     "page": "pages/options.html",
     "browser_style": true
   }
-
 }

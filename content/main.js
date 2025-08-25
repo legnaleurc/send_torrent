@@ -1,29 +1,28 @@
 class PromptClient {
-
-  constructor () {
+  constructor() {
     this._anchor = null;
     this._block = null;
   }
 
-  async setMessage (message) {
+  async setMessage(message) {
     this._maybeInitialize();
     this._block.textContent = message;
     this._update();
   }
 
-  close () {
+  close() {
     return new Promise((resolve) => {
-      this._block.addEventListener('transitionend', () => {
+      this._block.addEventListener("transitionend", () => {
         this._block.parentElement.removeChild(this._block);
         this._block = null;
         this._anchor = null;
         resolve();
       });
-      this._block.classList.add('fade');
+      this._block.classList.add("fade");
     });
   }
 
-  _maybeInitialize () {
+  _maybeInitialize() {
     if (!this._anchor) {
       this._anchor = document.activeElement;
     }
@@ -33,21 +32,19 @@ class PromptClient {
     }
   }
 
-  _create () {
-    const block = document.createElement('div');
-    block.classList.add('download-with-transmission', 'bubble');
+  _create() {
+    const block = document.createElement("div");
+    block.classList.add("download-with-transmission", "bubble");
     return block;
   }
 
-  _update () {
+  _update() {
     const position = getTargetPosition(this._anchor, this._block);
     moveElementCenterTo(this._block, position);
   }
-
 }
 
-
-function getTargetPosition (origin, block) {
+function getTargetPosition(origin, block) {
   origin = toCenterFromTopLeft(origin.getBoundingClientRect());
   block = toCenterFromTopLeft(block.getBoundingClientRect());
   // TODO top only for now
@@ -59,8 +56,7 @@ function getTargetPosition (origin, block) {
   };
 }
 
-
-function toCenterFromTopLeft (rect) {
+function toCenterFromTopLeft(rect) {
   return {
     x: rect.left + rect.width / 2,
     y: rect.top + rect.height / 2,
@@ -69,8 +65,7 @@ function toCenterFromTopLeft (rect) {
   };
 }
 
-
-function toTopLeftFromCenter (rect) {
+function toTopLeftFromCenter(rect) {
   return {
     left: rect.x - rect.width / 2,
     top: rect.y - rect.height / 2,
@@ -79,21 +74,19 @@ function toTopLeftFromCenter (rect) {
   };
 }
 
-
-function moveElementCenterTo (element, position) {
+function moveElementCenterTo(element, position) {
   position = toTopLeftFromCenter(position);
-  element.style.top = position.top + 'px';
-  element.style.left = position.left + 'px';
+  element.style.top = position.top + "px";
+  element.style.left = position.left + "px";
 }
-
 
 const prompt = new PromptClient();
 
 browser.runtime.onMessage.addListener((message, sender, sendResponse) => {
   switch (message.topic) {
-    case 'show-prompt':
+    case "show-prompt":
       return prompt.setMessage(message.args.message);
-    case 'close-prompt':
+    case "close-prompt":
       return prompt.close();
     default:
       break;
