@@ -1,4 +1,4 @@
-.download-with-transmission.bubble {
+.send-torrent.bubble {
   position: absolute;
 
   min-width: 120px;
@@ -21,6 +21,6 @@
   transition: opacity 5s ease-in;
 }
 
-.download-with-transmission.bubble.fade {
+.send-torrent.bubble.fade {
   opacity: 0;
 }

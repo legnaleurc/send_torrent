@@ -1,15 +1,25 @@
+/**
+ * A class to manage the prompt messages in the browser.
+ */
 class PromptClient {
   constructor() {
     this._anchor = null;
     this._block = null;
   }
 
+  /**
+   * Set the message for the prompt.
+   * @param {string} message - The message to display.
+   */
   async setMessage(message) {
     this._maybeInitialize();
     this._block.textContent = message;
     this._update();
   }
 
+  /**
+   * Close the prompt.
+   */
   close() {
     return new Promise((resolve) => {
       this._block.addEventListener("transitionend", () => {
@@ -22,6 +32,9 @@ class PromptClient {
     });
   }
 
+  /**
+   * Initialize the prompt.
+   */
   _maybeInitialize() {
     if (!this._anchor) {
       this._anchor = document.activeElement;
@@ -32,18 +45,31 @@ class PromptClient {
     }
   }
 
+  /**
+   * Create the prompt element.
+   * @returns {HTMLElement} The prompt element.
+   */
   _create() {
     const block = document.createElement("div");
-    block.classList.add("download-with-transmission", "bubble");
+    block.classList.add("send-torrent", "bubble");
     return block;
   }
 
+  /**
+   * Update the position of the prompt.
+   */
   _update() {
     const position = getTargetPosition(this._anchor, this._block);
     moveElementCenterTo(this._block, position);
   }
 }
 
+/**
+ * Get the target position for the prompt.
+ * @param {HTMLElement} origin - The element to position the prompt relative to.
+ * @param {HTMLElement} block - The prompt element.
+ * @returns {Object} The target position.
+ */
 function getTargetPosition(origin, block) {
   origin = toCenterFromTopLeft(origin.getBoundingClientRect());
   block = toCenterFromTopLeft(block.getBoundingClientRect());
@@ -56,6 +82,11 @@ function getTargetPosition(origin, block) {
   };
 }
 
+/**
+ * Convert a rectangle from top-left coordinates to center coordinates.
+ * @param {DOMRect} rect - The rectangle to convert.
+ * @returns {Object} The converted rectangle.
+ */
 function toCenterFromTopLeft(rect) {
   return {
     x: rect.left + rect.width / 2,
@@ -65,6 +96,11 @@ function toCenterFromTopLeft(rect) {
   };
 }
 
+/**
+ * Convert a rectangle from center coordinates to top-left coordinates.
+ * @param {Object} rect - The rectangle to convert.
+ * @returns {Object} The converted rectangle.
+ */
 function toTopLeftFromCenter(rect) {
   return {
     left: rect.x - rect.width / 2,
@@ -74,6 +110,11 @@ function toTopLeftFromCenter(rect) {
   };
 }
 
+/**
+ * Move an element to the center of a position.
+ * @param {HTMLElement} element - The element to move.
+ * @param {Object} position - The target position.
+ */
 function moveElementCenterTo(element, position) {
   position = toTopLeftFromCenter(position);
   element.style.top = position.top + "px";

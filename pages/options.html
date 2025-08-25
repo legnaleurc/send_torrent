@@ -5,32 +5,40 @@
     <link rel="stylesheet" type="text/css" href="options.css" />
   </head>
   <body>
-    <form id="options">
-      <div class="container">
-        <input name="version" type="hidden" value="2" />
+    <main>
+      <form id="options">
+        <div class="container">
+          <input name="version" type="hidden" value="3" />
 
-        <label for="url">RPC URL</label>
-        <input name="url" type="text" autocomplete="off" />
+          <label for="client">Client</label>
+          <select name="client">
+            <option value="transmission">Transmission</option>
+            <option value="qbittorrent">qBittorrent</option>
+          </select>
 
-        <label for="username">User Name</label>
-        <input name="username" type="text" autocomplete="off" />
+          <label for="url">URL</label>
+          <input name="url" type="text" autocomplete="off" />
 
-        <label for="password">Password</label>
-        <input name="password" type="password" />
+          <label for="username">User Name</label>
+          <input name="username" type="text" autocomplete="off" />
 
-        <label for="add-paused">Add Paused</label>
-        <input name="add-paused" type="checkbox" />
+          <label for="password">Password</label>
+          <input name="password" type="password" />
 
-        <label for="upload-file">Upload File</label>
-        <input name="upload-file" type="checkbox" />
-      </div>
+          <label for="add-paused">Add Paused</label>
+          <input name="add-paused" type="checkbox" />
 
-      <div class="button-box">
-        <button type="submit">Save</button>
-      </div>
-    </form>
+          <label for="upload-file">Upload File</label>
+          <input name="upload-file" type="checkbox" />
+        </div>
 
-    <script defer src="../chrome/core.js"></script>
-    <script defer src="options.js"></script>
+        <div class="button-box">
+          <button type="submit">Save</button>
+        </div>
+      </form>
+    </main>
+
+    <!-- <script type="module" src="../chrome/core.js"></script> -->
+    <script type="module" src="options.mjs"></script>
   </body>
 </html>

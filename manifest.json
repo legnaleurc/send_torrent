@@ -8,12 +8,13 @@
   "permissions": ["menus", "storage", "http://*/", "https://*/"],
 
   "background": {
-    "scripts": ["chrome/core.js", "chrome/main.js"]
+    "type": "module",
+    "scripts": ["chrome/main.mjs"]
   },
   "content_scripts": [
     {
       "matches": ["http://*/*", "https://*/*"],
-      "js": ["content/main.js"],
+      "js": ["content/main.mjs"],
       "css": ["content/main.css"]
     }
   ],

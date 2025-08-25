@@ -1,11 +1,16 @@
+import { PromptServer } from "./prompt.mjs";
+import { sendToTransmission } from "./transmission.mjs";
+
+const kMenuId = "send-torrent";
+
 browser.menus.create({
-  id: "send-to-transmission",
-  title: "Send To Transmission",
+  id: kMenuId,
+  title: "Send Torrent",
   contexts: ["link"],
 });
 
 browser.menus.onClicked.addListener((info, tab) => {
-  if (info.menuItemId === "send-to-transmission") {
+  if (info.menuItemId === kMenuId) {
     main(info.linkUrl, tab.id);
   }
 });
@@ -17,7 +22,7 @@ async function main(linkUrl, tabId) {
   try {
     await sendToTransmission(linkUrl);
   } catch (e) {
-    console.error("Download with Transmission", e);
+    console.error("Send Torrent", e);
     msg = e.toString();
   }
   await prompt.setMessage(msg);
