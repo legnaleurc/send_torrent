@@ -1,4 +1,4 @@
-import { loadOptions } from "./storage.mjs";
+/** @typedef {import("./storage.mjs").Options} Options */
 
 const kCsrfTokenKey = "X-Transmission-Session-Id";
 /**
@@ -9,17 +9,16 @@ let gCurrentCsrfToken = null;
 /**
  * Send a torrent to the Transmission server.
  * @param {String} torrentURL to the torrent file
+ * @param {Options} options - The options to use for the request
  * @returns {Promise<Object>} response from the Transmission server
  */
-export async function sendToTransmission(torrentURL) {
-  const opts = await loadOptions();
-
-  const torrentArg = await getTorrentArg(opts["upload-file"], torrentURL);
+export async function sendToTransmission(torrentURL, options) {
+  const torrentArg = await getTorrentArg(options["upload-file"], torrentURL);
 
   const headers = new Headers();
   headers.append("Content-Type", "application/json");
-  if (opts.username && opts.password) {
-    const authToken = btoa(`${opts.username}:${opts.password}`);
+  if (options.username && options.password) {
+    const authToken = btoa(`${options.username}:${options.password}`);
     headers.append("Authorization", `Basic ${authToken}`);
   }
   if (gCurrentCsrfToken) {

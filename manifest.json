@@ -5,7 +5,14 @@
 
   "description": "Send a link to torrent server.",
 
-  "permissions": ["menus", "storage", "http://*/", "https://*/"],
+  "permissions": [
+    "http://*/",
+    "https://*/",
+    "menus",
+    "storage",
+    "webRequest",
+    "webRequestBlocking"
+  ],
 
   "background": {
     "type": "module",

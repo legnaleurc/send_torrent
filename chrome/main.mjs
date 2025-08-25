@@ -1,5 +1,5 @@
 import { PromptServer } from "./prompt.mjs";
-import { sendToTransmission } from "./transmission.mjs";
+import { sendTorrent } from "./send.mjs";
 
 const kMenuId = "send-torrent";
 
@@ -15,12 +15,51 @@ browser.menus.onClicked.addListener((info, tab) => {
   }
 });
 
+browser.webRequest.onBeforeSendHeaders.addListener(
+  (details) => {
+    if (details.tabId !== -1) {
+      // skip real page requests
+      return {};
+    }
+
+    let headers = details.requestHeaders;
+    const marked = headers.find(
+      (h) => h.name.toLowerCase() === "x-send-torrent-origin",
+    );
+    if (!marked) {
+      // skip if not ours
+      return {};
+    }
+    const overwriteOrigin = marked.value;
+
+    // Remove marker
+    headers = headers.filter(
+      (h) => h.name.toLowerCase() !== "x-send-torrent-origin",
+    );
+
+    // Overwrite Origin
+    const origin = headers.find((h) => h.name.toLowerCase() === "origin");
+    if (origin) {
+      origin.value = overwriteOrigin;
+    } else {
+      headers.push({ name: "Origin", value: overwriteOrigin });
+    }
+
+    return { requestHeaders: headers };
+  },
+  {
+    urls: ["<all_urls>"],
+    types: ["xmlhttprequest"],
+  },
+  ["blocking", "requestHeaders"],
+);
+
 async function main(linkUrl, tabId) {
   const prompt = new PromptServer(tabId);
   await prompt.setMessage("Sending ...");
   let msg = "Done";
   try {
-    await sendToTransmission(linkUrl);
+    await sendTorrent(linkUrl);
   } catch (e) {
     console.error("Send Torrent", e);
     msg = e.toString();

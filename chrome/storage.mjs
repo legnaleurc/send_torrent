@@ -1,6 +1,7 @@
 /**
  * @typedef {Object} Options
  * @property {number} version - The version of the options.
+ * @property {string} client - The torrent client to use (e.g., "transmission").
  * @property {string} url - The URL of the Transmission server.
  * @property {string} username - The username for the Transmission server.
  * @property {string} password - The password for the Transmission server.
@@ -15,6 +16,7 @@
 function getDefaultValue() {
   return {
     version: 3,
+    client: "transmission",
     url: "",
     username: "",
     password: "",
@@ -59,6 +61,9 @@ export async function saveOptionsFromForm(form) {
           break;
         case "checkbox":
           rv[input.name] = input.checked;
+          break;
+        case "select-one":
+          rv[input.name] = input.value;
           break;
         default:
           break;
