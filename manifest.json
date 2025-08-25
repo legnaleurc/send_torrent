@@ -1,10 +1,10 @@
 {
 
   "manifest_version": 2,
-  "name": "Download with Transmission",
+  "name": "Send Torrent",
   "version": "1.2",
 
-  "description": "Download a link with Transmission.",
+  "description": "Send a link to torrent server.",
 
   "permissions": [
     "menus",

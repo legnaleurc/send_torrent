@@ -1,3 +1,3 @@
-# Download with Transmission
+# Send Torrent
 
 WebExtension for Firefox.
