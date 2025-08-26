@@ -1,11 +1,11 @@
-/** @typedef {import("./storage.mjs").Options} Options */
+/** @typedef {import("./storage").ClientOptions} ClientOptions */
 
 const kPathAddTorrent = "/api/v2/torrents/add";
 
 /**
  * Send a torrent to the qBittorrent server.
  * @param {string} torrentUrl - The URL of the torrent file.
- * @param {Options} options - The options to use for the request.
+ * @param {ClientOptions} options - The options to use for the request.
  */
 export async function sendToQBittorrent(torrentUrl, options) {
   let succeed = await addTorrent(torrentUrl, options);
@@ -22,8 +22,8 @@ export async function sendToQBittorrent(torrentUrl, options) {
 /**
  * Add a torrent to the qBittorrent server.
  * @param {string} torrentUrl - The URL of the torrent file.
- * @param {Options} options - The options to use for the request.
-` */
+ * @param {ClientOptions} options - The options to use for the request.
+ */
 async function addTorrent(torrentUrl, options) {
   const apiUrl = `${options.url}${kPathAddTorrent}`;
   const addPaused = options["add-paused"];
@@ -33,8 +33,13 @@ async function addTorrent(torrentUrl, options) {
     form.append("paused", "true");
   }
   if (uploadFile) {
-    const blob = await downloadTorrent(torrentUrl);
-    form.append("torrents", blob, "_.torrent");
+    if (options.torrentData) {
+      // Encode ArrayBuffer to Blob for qBittorrent
+      const blob = new Blob([options.torrentData]);
+      form.append("torrents", blob, "_.torrent");
+    } else {
+      throw new Error("upload-file is enabled but no torrent data provided");
+    }
   } else {
     form.append("urls", torrentUrl);
   }
@@ -56,7 +61,7 @@ async function addTorrent(torrentUrl, options) {
 
 /**
  * Authorize the user with the qBittorrent server.
- * @param {Options} options - The options to use for the request.
+ * @param {ClientOptions} options - The options to use for the request.
  * @returns {Promise<boolean>} Whether the authorization was successful.
  */
 async function authorize(options) {
@@ -75,18 +80,4 @@ async function authorize(options) {
     throw new Error(`Failed to authorize: ${response.statusText}`);
   }
   return true;
-}
-
-/**
- * Download a torrent file.
- * @param {string} torrentUrl - The URL of the torrent file.
- * @returns {Promise<Blob>} The blob of the downloaded torrent file.
- */
-async function downloadTorrent(torrentUrl) {
-  const response = await fetch(torrentUrl);
-  if (!response.ok) {
-    throw new Error(`Failed to download torrent: ${response.statusText}`);
-  }
-  const blob = await response.blob();
-  return blob;
 }

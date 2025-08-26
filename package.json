@@ -16,6 +16,7 @@
   },
   "homepage": "https://github.com/legnaleurc/send_torrent#readme",
   "devDependencies": {
+    "@types/firefox-webext-browser": "^120.0.4",
     "prettier": "^3.6.2",
     "web-ext": "^8.9.0"
   }

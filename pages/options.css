@@ -8,15 +8,81 @@ main {
 }
 
 #options .container {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+}
+
+.client-section,
+.global-section {
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  padding: 1.5rem;
+  background-color: #f9f9f9;
+}
+
+.client-section h3,
+.global-section h3 {
+  margin-top: 0;
+  margin-bottom: 1rem;
+  color: #333;
+  border-bottom: 2px solid #007acc;
+  padding-bottom: 0.5rem;
+}
+
+.client-section .form-row,
+.global-section .form-row {
   display: grid;
   grid-template-columns: 1fr 4fr;
+  gap: 1rem;
+  margin-bottom: 1rem;
+  align-items: center;
 }
 
-#options .container input[type="checkbox"] {
+.client-section label,
+.global-section label {
+  font-weight: 500;
+  color: #555;
+}
+
+.client-section input[type="text"],
+.client-section input[type="password"],
+.global-section input[type="text"],
+.global-section input[type="password"] {
+  padding: 0.5rem;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  font-size: 14px;
+}
+
+.client-section input[type="checkbox"],
+.global-section input[type="checkbox"] {
   width: 1rem;
+  height: 1rem;
+  margin: 0;
 }
 
-#options .button-box {
+.button-box {
   display: flex;
   justify-content: flex-end;
+  margin-top: 2rem;
+}
+
+.button-box button {
+  padding: 0.75rem 2rem;
+  background-color: #007acc;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  font-size: 16px;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.button-box button:hover {
+  background-color: #005a9e;
+}
+
+.button-box button:active {
+  background-color: #004080;
 }

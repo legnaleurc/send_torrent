@@ -54,6 +54,11 @@ browser.webRequest.onBeforeSendHeaders.addListener(
   ["blocking", "requestHeaders"],
 );
 
+/**
+ * Main function to handle the sending of a torrent.
+ * @param {string} linkUrl Torrent url
+ * @param {number} tabId Tab id
+ */
 async function main(linkUrl, tabId) {
   const prompt = new PromptServer(tabId);
   await prompt.setMessage("Sending ...");

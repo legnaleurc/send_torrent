@@ -10,26 +10,68 @@
         <div class="container">
           <input name="version" type="hidden" value="3" />
 
-          <label for="client">Client</label>
-          <select name="client">
-            <option value="transmission">Transmission</option>
-            <option value="qbittorrent">qBittorrent</option>
-          </select>
+          <!-- Transmission Client Section -->
+          <div class="client-section">
+            <h3>Transmission</h3>
+            <div class="form-row">
+              <label for="transmission-enabled">Enable Transmission</label>
+              <input name="transmission-enabled" type="checkbox" />
+            </div>
+            <div class="form-row">
+              <label for="transmission-url">URL</label>
+              <input name="transmission-url" type="text" autocomplete="off" />
+            </div>
+            <div class="form-row">
+              <label for="transmission-username">User Name</label>
+              <input
+                name="transmission-username"
+                type="text"
+                autocomplete="off"
+              />
+            </div>
+            <div class="form-row">
+              <label for="transmission-password">Password</label>
+              <input name="transmission-password" type="password" />
+            </div>
+          </div>
 
-          <label for="url">URL</label>
-          <input name="url" type="text" autocomplete="off" />
+          <!-- qBittorrent Client Section -->
+          <div class="client-section">
+            <h3>qBittorrent</h3>
+            <div class="form-row">
+              <label for="qbittorrent-enabled">Enable qBittorrent</label>
+              <input name="qbittorrent-enabled" type="checkbox" />
+            </div>
+            <div class="form-row">
+              <label for="qbittorrent-url">URL</label>
+              <input name="qbittorrent-url" type="text" autocomplete="off" />
+            </div>
+            <div class="form-row">
+              <label for="qbittorrent-username">User Name</label>
+              <input
+                name="qbittorrent-username"
+                type="text"
+                autocomplete="off"
+              />
+            </div>
+            <div class="form-row">
+              <label for="qbittorrent-password">Password</label>
+              <input name="qbittorrent-password" type="password" />
+            </div>
+          </div>
 
-          <label for="username">User Name</label>
-          <input name="username" type="text" autocomplete="off" />
-
-          <label for="password">Password</label>
-          <input name="password" type="password" />
-
-          <label for="add-paused">Add Paused</label>
-          <input name="add-paused" type="checkbox" />
-
-          <label for="upload-file">Upload File</label>
-          <input name="upload-file" type="checkbox" />
+          <!-- Global Options Section -->
+          <div class="global-section">
+            <h3>Global Options</h3>
+            <div class="form-row">
+              <label for="add-paused">Add Paused</label>
+              <input name="add-paused" type="checkbox" />
+            </div>
+            <div class="form-row">
+              <label for="upload-file">Upload File</label>
+              <input name="upload-file" type="checkbox" />
+            </div>
+          </div>
         </div>
 
         <div class="button-box">

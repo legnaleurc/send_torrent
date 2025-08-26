@@ -2,6 +2,9 @@
  * A class to manage the prompt messages in the browser.
  */
 export class PromptServer {
+  /**
+   * @param {number} tabId
+   */
   constructor(tabId) {
     this._tabId = tabId;
   }
