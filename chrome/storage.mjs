@@ -9,13 +9,13 @@ function getDefaultValue() {
     version: 3,
     clients: {
       transmission: {
-        enabled: true,
+        enabled: false,
         url: "",
         username: "",
         password: "",
       },
       qbittorrent: {
-        enabled: true,
+        enabled: false,
         url: "",
         username: "",
         password: "",
