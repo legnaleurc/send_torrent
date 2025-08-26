@@ -3,6 +3,7 @@
   "version": "1.2.0",
   "description": "WebExtension for Firefox.",
   "scripts": {
+    "build": "web-ext build",
     "format": "prettier --write ."
   },
   "repository": {
