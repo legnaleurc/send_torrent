@@ -5,6 +5,13 @@
 
   "description": "Send a link to torrent server.",
 
+  "browser_specific_settings": {
+    "gecko": {
+      "id": "@send_torrent.wcpan",
+      "strict_min_version": "58.0"
+    }
+  },
+
   "icons": {
     "128": "static/icon.svg"
   },
