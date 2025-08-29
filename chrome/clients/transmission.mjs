@@ -1,4 +1,4 @@
-/** @typedef {import("./storage").ClientOptions} ClientOptions */
+/** @typedef {import("../storage").ClientOptions} ClientOptions */
 
 const kCsrfTokenKey = "X-Transmission-Session-Id";
 /**

@@ -1,6 +1,6 @@
 import { loadOptions } from "./storage.mjs";
-import { sendToTransmission } from "./transmission.mjs";
-import { sendToQBittorrent } from "./qbittorrent.mjs";
+import { sendToTransmission } from "./clients/transmission.mjs";
+import { sendToQBittorrent } from "./clients/qbittorrent.mjs";
 
 /**
  * Download a torrent file and return the raw ArrayBuffer.

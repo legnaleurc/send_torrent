@@ -1,4 +1,4 @@
-/** @typedef {import("./storage").ClientOptions} ClientOptions */
+/** @typedef {import("../storage").ClientOptions} ClientOptions */
 
 const kPathAddTorrent = "/api/v2/torrents/add";
 
