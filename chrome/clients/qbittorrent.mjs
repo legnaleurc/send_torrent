@@ -28,6 +28,14 @@ async function addTorrent(torrentUrl, options) {
   const apiUrl = `${options.url}${kPathAddTorrent}`;
   const addPaused = options["add-paused"];
   const uploadFile = options["upload-file"];
+
+  const headers = new Headers();
+  headers.append("X-Send-Torrent-Origin", options.url);
+  if (options.username && options.password) {
+    const authToken = btoa(`${options.username}:${options.password}`);
+    headers.append("Authorization", `Basic ${authToken}`);
+  }
+
   const form = new FormData();
   if (addPaused) {
     form.append("paused", "true");
@@ -43,11 +51,10 @@ async function addTorrent(torrentUrl, options) {
   } else {
     form.append("urls", torrentUrl);
   }
+
   const response = await fetch(apiUrl, {
     method: "POST",
-    headers: {
-      "X-Send-Torrent-Origin": options.url,
-    },
+    headers,
     body: form,
   });
   if (response.ok) {
