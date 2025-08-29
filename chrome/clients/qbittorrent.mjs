@@ -1,6 +1,7 @@
 /** @typedef {import("../storage").ClientOptions} ClientOptions */
 
 const kPathAddTorrent = "/api/v2/torrents/add";
+const kPathLogin = "/api/v2/auth/login";
 
 /**
  * Send a torrent to the qBittorrent server.
@@ -72,7 +73,7 @@ async function addTorrent(torrentUrl, options) {
  * @returns {Promise<boolean>} Whether the authorization was successful.
  */
 async function authorize(options) {
-  const apiUrl = `${options.url}/api/v2/auth/login`;
+  const apiUrl = `${options.url}${kPathLogin}`;
   const query = new URLSearchParams();
   query.append("username", options.username);
   query.append("password", options.password);
