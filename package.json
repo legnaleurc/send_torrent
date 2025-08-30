@@ -2,10 +2,6 @@
   "name": "send_torrent",
   "version": "1.2.0",
   "description": "WebExtension for Firefox.",
-  "scripts": {
-    "build": "web-ext build",
-    "format": "prettier --write ."
-  },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/legnaleurc/send_torrent.git"
@@ -16,6 +12,11 @@
     "url": "https://github.com/legnaleurc/send_torrent/issues"
   },
   "homepage": "https://github.com/legnaleurc/send_torrent#readme",
+  "type": "module",
+  "scripts": {
+    "build": "web-ext build",
+    "format": "prettier --write ."
+  },
   "devDependencies": {
     "@types/firefox-webext-browser": "^120.0.4",
     "prettier": "^3.6.2",
