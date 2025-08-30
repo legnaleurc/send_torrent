@@ -16,14 +16,7 @@
     "128": "static/icon.svg"
   },
 
-  "permissions": [
-    "http://*/",
-    "https://*/",
-    "menus",
-    "storage",
-    "webRequest",
-    "webRequestBlocking"
-  ],
+  "permissions": ["http://*/", "https://*/", "menus", "storage"],
 
   "background": {
     "type": "module",

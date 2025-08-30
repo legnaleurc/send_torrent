@@ -15,45 +15,6 @@ browser.menus.onClicked.addListener((info, tab) => {
   }
 });
 
-browser.webRequest.onBeforeSendHeaders.addListener(
-  (details) => {
-    if (details.tabId !== -1) {
-      // skip real page requests
-      return {};
-    }
-
-    let headers = details.requestHeaders;
-    const marked = headers.find(
-      (h) => h.name.toLowerCase() === "x-send-torrent-origin",
-    );
-    if (!marked) {
-      // skip if not ours
-      return {};
-    }
-    const overwriteOrigin = marked.value;
-
-    // Remove marker
-    headers = headers.filter(
-      (h) => h.name.toLowerCase() !== "x-send-torrent-origin",
-    );
-
-    // Overwrite Origin
-    const origin = headers.find((h) => h.name.toLowerCase() === "origin");
-    if (origin) {
-      origin.value = overwriteOrigin;
-    } else {
-      headers.push({ name: "Origin", value: overwriteOrigin });
-    }
-
-    return { requestHeaders: headers };
-  },
-  {
-    urls: ["<all_urls>"],
-    types: ["xmlhttprequest"],
-  },
-  ["blocking", "requestHeaders"],
-);
-
 /**
  * Main function to handle the sending of a torrent.
  * @param {string} linkUrl Torrent url

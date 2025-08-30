@@ -28,7 +28,6 @@ async function addTorrent(options) {
   const { torrentUrl, addPaused, torrentData } = options;
 
   const headers = new Headers();
-  headers.append("X-Send-Torrent-Origin", options.url);
   if (options.username && options.password) {
     const authToken = btoa(`${options.username}:${options.password}`);
     headers.append("Authorization", `Basic ${authToken}`);
@@ -66,15 +65,13 @@ async function addTorrent(options) {
  * @returns {Promise<boolean>} Whether the authorization was successful.
  */
 async function authorize(options) {
+  throw new Error("Not implemented");
   const apiUrl = `${options.url}${kPathLogin}`;
   const query = new URLSearchParams();
   query.append("username", options.username);
   query.append("password", options.password);
   const response = await fetch(apiUrl, {
     method: "POST",
-    headers: {
-      "X-Send-Torrent-Origin": options.url,
-    },
     body: query,
   });
   if (!response.ok) {
