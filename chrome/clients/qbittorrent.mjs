@@ -1,20 +1,19 @@
-/** @typedef {import("../storage").ClientOptions} ClientOptions */
+/** @typedef {import("./qbittorrent").QBittorrentOptions} QBittorrentOptions */
 
 const kPathAddTorrent = "/api/v2/torrents/add";
 const kPathLogin = "/api/v2/auth/login";
 
 /**
  * Send a torrent to the qBittorrent server.
- * @param {string} torrentUrl - The URL of the torrent file.
- * @param {ClientOptions} options - The options to use for the request.
+ * @param {QBittorrentOptions} options - The options to use for the request.
  */
-export async function sendToQBittorrent(torrentUrl, options) {
-  let succeed = await addTorrent(torrentUrl, options);
+export async function sendToQBittorrent(options) {
+  let succeed = await addTorrent(options);
   if (succeed) {
     return;
   }
   await authorize(options);
-  succeed = await addTorrent(torrentUrl, options);
+  succeed = await addTorrent(options);
   if (!succeed) {
     throw new Error("Failed to send torrent to qBittorrent");
   }
@@ -22,13 +21,11 @@ export async function sendToQBittorrent(torrentUrl, options) {
 
 /**
  * Add a torrent to the qBittorrent server.
- * @param {string} torrentUrl - The URL of the torrent file.
- * @param {ClientOptions} options - The options to use for the request.
+ * @param {QBittorrentOptions} options - The options to use for the request.
  */
-async function addTorrent(torrentUrl, options) {
+async function addTorrent(options) {
   const apiUrl = `${options.url}${kPathAddTorrent}`;
-  const addPaused = options["add-paused"];
-  const uploadFile = options["upload-file"];
+  const { torrentUrl, addPaused, torrentData } = options;
 
   const headers = new Headers();
   headers.append("X-Send-Torrent-Origin", options.url);
@@ -41,14 +38,10 @@ async function addTorrent(torrentUrl, options) {
   if (addPaused) {
     form.append("paused", "true");
   }
-  if (uploadFile) {
-    if (options.torrentData) {
-      // Encode ArrayBuffer to Blob for qBittorrent
-      const blob = new Blob([options.torrentData]);
-      form.append("torrents", blob, "_.torrent");
-    } else {
-      throw new Error("upload-file is enabled but no torrent data provided");
-    }
+  if (torrentData) {
+    // Encode ArrayBuffer to Blob for qBittorrent
+    const blob = new Blob([torrentData]);
+    form.append("torrents", blob, "_.torrent");
   } else {
     form.append("urls", torrentUrl);
   }
@@ -69,7 +62,7 @@ async function addTorrent(torrentUrl, options) {
 
 /**
  * Authorize the user with the qBittorrent server.
- * @param {ClientOptions} options - The options to use for the request.
+ * @param {QBittorrentOptions} options - The options to use for the request.
  * @returns {Promise<boolean>} Whether the authorization was successful.
  */
 async function authorize(options) {

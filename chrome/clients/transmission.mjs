@@ -1,4 +1,4 @@
-/** @typedef {import("../storage").ClientOptions} ClientOptions */
+/** @typedef {import("./transmission").TransmissionOptions} TransmissionOptions */
 
 const kCsrfTokenKey = "X-Transmission-Session-Id";
 /**
@@ -8,21 +8,19 @@ let gCurrentCsrfToken = null;
 
 /**
  * Send a torrent to the Transmission server.
- * @param {String} torrentURL to the torrent file
- * @param {ClientOptions} options - The options to use for the request
+ * @param {TransmissionOptions} options - The options to use for the request
  * @returns {Promise<Object>} response from the Transmission server
  */
-export async function sendToTransmission(torrentURL, options) {
-  const torrentArg = await getTorrentArg(
-    options["upload-file"],
-    torrentURL,
-    options.torrentData,
-  );
+export async function sendToTransmission(options) {
+  const { torrentUrl, torrentData, username, password, addPaused, url } =
+    options;
+
+  const torrentArg = await getTorrentArg(torrentUrl, torrentData);
 
   const headers = new Headers();
   headers.append("Content-Type", "application/json");
-  if (options.username && options.password) {
-    const authToken = btoa(`${options.username}:${options.password}`);
+  if (username && password) {
+    const authToken = btoa(`${username}:${password}`);
     headers.append("Authorization", `Basic ${authToken}`);
   }
   if (gCurrentCsrfToken) {
@@ -33,11 +31,11 @@ export async function sendToTransmission(torrentURL, options) {
     method: "torrent-add",
     arguments: {
       ...torrentArg,
-      paused: options["add-paused"],
+      paused: addPaused,
     },
   };
 
-  const request = new Request(options.url, {
+  const request = new Request(url, {
     method: "POST",
     headers,
     body: JSON.stringify(args),
@@ -49,7 +47,7 @@ export async function sendToTransmission(torrentURL, options) {
   if (response.status === 409) {
     if (response.headers.has(kCsrfTokenKey)) {
       gCurrentCsrfToken = response.headers.get(kCsrfTokenKey);
-      return sendToTransmission(torrentURL, options);
+      return sendToTransmission(options);
     }
   }
   if (!response.ok) {
@@ -64,30 +62,21 @@ export async function sendToTransmission(torrentURL, options) {
 
 /**
  * Get the arguments for the torrent.
- * @param {boolean} uploadFile - Whether to upload the torrent file.
  * @param {string} torrentURL - The URL of the torrent file.
- * @param {ArrayBuffer} [torrentData] - Pre-downloaded torrent data.
+ * @param {ArrayBuffer} torrentData - Pre-downloaded torrent data.
  * @returns {Promise<Object>} The arguments for the torrent.
  */
-async function getTorrentArg(uploadFile, torrentURL, torrentData) {
-  const url = new URL(torrentURL);
-  const isHttp = url.protocol === "https:" || url.protocol === "http:";
-  // only supports http, no magnet or anything else
-  if (uploadFile && isHttp) {
-    if (torrentData) {
-      // Encode ArrayBuffer to base64 for Transmission
-      const uint8Array = new Uint8Array(torrentData);
-      const string = String.fromCharCode(...uint8Array);
-      const base64 = btoa(string);
-      return {
-        metainfo: base64,
-      };
-    } else {
-      throw new Error("upload-file is enabled but no torrent data provided");
-    }
-  } else {
+async function getTorrentArg(torrentURL, torrentData) {
+  if (!torrentData) {
     return {
       filename: torrentURL,
     };
   }
+  // Encode ArrayBuffer to base64 for Transmission
+  const uint8Array = new Uint8Array(torrentData);
+  const string = String.fromCharCode(...uint8Array);
+  const base64 = btoa(string);
+  return {
+    metainfo: base64,
+  };
 }
