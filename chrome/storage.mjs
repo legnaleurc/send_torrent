@@ -1,8 +1,10 @@
-/** @typedef {import("./storage").Options} Options */
+/** @typedef {import("./storage").OptionsV1} OptionsV1 */
+/** @typedef {import("./storage").OptionsV2} OptionsV2 */
+/** @typedef {import("./storage").OptionsV3} OptionsV3 */
 
 /**
  * Get the default options.
- * @returns {Options} Default options
+ * @returns {OptionsV3} Default options
  */
 function getDefaultValue() {
   return {
@@ -76,37 +78,19 @@ export async function loadOptionsToForm(form) {
  * @param {HTMLFormElement} form HTML form element
  */
 export async function saveOptionsFromForm(form) {
-  const opts = {
-    version: 3,
-    clients: {
-      transmission: {
-        enabled: false,
-        url: "",
-        username: "",
-        password: "",
-      },
-      qbittorrent: {
-        enabled: false,
-        url: "",
-        username: "",
-        password: "",
-      },
-    },
-    "add-paused": false,
-    "upload-file": false,
-  };
+  const options = getDefaultValue();
 
   // Handle top-level options
   const addPausedInput = form.querySelector('input[name="add-paused"]');
   const uploadFileInput = form.querySelector('input[name="upload-file"]');
 
   if (addPausedInput && addPausedInput instanceof HTMLInputElement)
-    opts["add-paused"] = addPausedInput.checked;
+    options["add-paused"] = addPausedInput.checked;
   if (uploadFileInput && uploadFileInput instanceof HTMLInputElement)
-    opts["upload-file"] = uploadFileInput.checked;
+    options["upload-file"] = uploadFileInput.checked;
 
   // Handle client-specific options
-  for (const clientName of Object.keys(opts.clients)) {
+  for (const clientName of Object.keys(options.clients)) {
     const enabledInput = form.querySelector(
       `input[name="${clientName}-enabled"]`,
     );
@@ -119,84 +103,113 @@ export async function saveOptionsFromForm(form) {
     );
 
     if (enabledInput && enabledInput instanceof HTMLInputElement)
-      opts.clients[clientName].enabled = enabledInput.checked;
+      options.clients[clientName].enabled = enabledInput.checked;
     if (urlInput && urlInput instanceof HTMLInputElement)
-      opts.clients[clientName].url = urlInput.value;
+      options.clients[clientName].url = urlInput.value;
     if (usernameInput && usernameInput instanceof HTMLInputElement)
-      opts.clients[clientName].username = usernameInput.value;
+      options.clients[clientName].username = usernameInput.value;
     if (passwordInput && passwordInput instanceof HTMLInputElement)
-      opts.clients[clientName].password = passwordInput.value;
+      options.clients[clientName].password = passwordInput.value;
   }
 
-  await saveOptions(opts);
+  await saveOptions(options);
 }
 
 /**
  * Load options from storage.
- * @returns {Promise<Options | null>} Options object
+ * @returns {Promise<OptionsV3>} Options object
  */
 export async function loadOptions() {
-  let opts = null;
-  try {
-    // @ts-ignore - browser API is available in browser extension context
-    opts = await browser.storage.local.get("options");
-  } catch (e) {
-    opts = null;
-  }
-  if (opts) {
-    opts = opts.options;
-  }
-  if (!opts) {
-    opts = getDefaultValue();
-  }
+  const savedData = await browser.storage.local.get({
+    options: getDefaultValue(),
+  });
+  /**
+   * @type {OptionsV1 | OptionsV2 | OptionsV3}
+   */
+  const options = savedData.options;
 
-  // migration
+  const migratedOptions = migrateOptions(options);
+  await saveOptions(migratedOptions);
+
+  return migratedOptions;
+}
+
+/**
+ * Migrate options to the latest version.
+ * @param {OptionsV1 | OptionsV2 | OptionsV3} options
+ * @returns {OptionsV3}
+ */
+function migrateOptions(options) {
   while (true) {
-    if (opts.version === 1) {
-      opts["upload-file"] = false;
-      opts.version = 2;
-      await saveOptions(opts);
-    } else if (opts.version === 2) {
-      // Migrate from v2 to v3: convert single client config to multi-client
-      const oldConfig = {
-        version: 3,
-        clients: {
-          transmission: {
-            enabled: true,
-            url: opts.url || "",
-            username: opts.username || "",
-            password: opts.password || "",
-          },
-          qbittorrent: {
-            enabled: false,
-            url: "",
-            username: "",
-            password: "",
-          },
-        },
-        "add-paused": opts["add-paused"] || false,
-        "upload-file": opts["upload-file"] || false,
-      };
-      opts = oldConfig;
-      await saveOptions(opts);
-      break;
-    } else if (opts.version === 3) {
-      break;
+    if (options.version === 1) {
+      options = migrateToV2(options);
+    } else if (options.version === 2) {
+      options = migrateToV3(options);
+    } else if (options.version === 3) {
+      return options;
     } else {
       throw new Error("incompatible version");
     }
   }
+}
 
-  delete opts.version;
-  return opts;
+/**
+ * Migrate options from v1 to v2.
+ * @param {OptionsV1} options
+ * @returns {OptionsV2} Migrated options
+ */
+function migrateToV2(options) {
+  /**
+   * @type {OptionsV2}
+   */
+  const migrated = {
+    version: 2,
+    url: options.url ?? "",
+    username: options.username ?? "",
+    password: options.password ?? "",
+    "add-paused": options["add-paused"] ?? false,
+    "upload-file": options["upload-file"] ?? false,
+  };
+  return migrated;
+}
+
+/**
+ * Migrate options from an older version to v3.
+ * @param {OptionsV2} options
+ * @returns {OptionsV3} Migrated options
+ */
+function migrateToV3(options) {
+  /**
+   * @type {OptionsV3}
+   */
+  const migrated = {
+    version: 3,
+    clients: {
+      transmission: {
+        enabled: true,
+        url: options.url ?? "",
+        username: options.username ?? "",
+        password: options.password ?? "",
+      },
+      qbittorrent: {
+        enabled: false,
+        url: "",
+        username: "",
+        password: "",
+      },
+    },
+    "add-paused": options["add-paused"] ?? false,
+    "upload-file": options["upload-file"] ?? false,
+  };
+  return migrated;
 }
 
 /**
  * Save options to storage.
- * @param {Options} opts Options object
+ * @param {OptionsV3} options Options object
  */
-async function saveOptions(opts) {
+async function saveOptions(options) {
   await browser.storage.local.set({
-    options: opts,
+    options,
   });
 }

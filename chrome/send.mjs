@@ -18,19 +18,16 @@ async function downloadTorrent(torrentUrl) {
 
 /**
  * Send a torrent to the enabled torrent clients.
- * @param {string} torrentUri - The URI of the torrent to send.
+ * @param {string} torrentUrl - The URI of the torrent to send.
  */
-export async function sendTorrent(torrentUri) {
+export async function sendTorrent(torrentUrl) {
   const options = await loadOptions();
-  if (!options) {
-    throw new Error("cannot load options");
-  }
 
   // Download torrent once if upload-file is enabled
   let torrentData = null;
   if (options["upload-file"]) {
     try {
-      torrentData = await downloadTorrent(torrentUri);
+      torrentData = await downloadTorrent(torrentUrl);
     } catch (error) {
       throw new Error(
         `upload-file is enabled but failed to download torrent: ${error.message}`,
@@ -52,7 +49,7 @@ export async function sendTorrent(torrentUri) {
     };
     enabledClients.push({
       name: "Transmission",
-      promise: sendToTransmission(torrentUri, transmissionOptions),
+      promise: sendToTransmission(torrentUrl, transmissionOptions),
     });
   }
 
@@ -68,7 +65,7 @@ export async function sendTorrent(torrentUri) {
     };
     enabledClients.push({
       name: "qBittorrent",
-      promise: sendToQBittorrent(torrentUri, qbittorrentOptions),
+      promise: sendToQBittorrent(torrentUrl, qbittorrentOptions),
     });
   }
 
